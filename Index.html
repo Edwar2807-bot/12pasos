@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#18212a" media="(prefers-color-scheme: dark)">
+<style>
+html{color-scheme:light dark}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Repaso 12 pasos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una columna de 560px; barra fija con progreso y dos modos; tarjetas de repaso con puntos tapados, y debajo la lista de estudio */
+:root{
+  --bg:#eef2f5; --surface:#ffffff; --surface-2:#f5f8fa; --fg:#131d26; --muted:#5b6b7a;
+  --line:#d9e1e8; --accent:#17597f; --accent-soft:#dcebf4; --good:#2c7a55; --warn:#8f5512;
+  --display:"Newsreader",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f151b; --surface:#18212a; --surface-2:#1e2831; --fg:#e6edf3; --muted:#93a4b3;
+  --line:#2a3741; --accent:#74b7e0; --accent-soft:#1b2e3c; --good:#5fb98c; --warn:#d49a4e;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f151b; --surface:#18212a; --surface-2:#1e2831; --fg:#e6edf3; --muted:#93a4b3;
+  --line:#2a3741; --accent:#74b7e0; --accent-soft:#1b2e3c; --good:#5fb98c; --warn:#d49a4e;
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3{text-wrap:balance;margin:0}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:560px;margin:0 auto;padding-block:10px 0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:8px}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.brand h1{font-family:var(--display);font-size:1.3rem;font-weight:600;letter-spacing:-.01em}
+.brand .cnt{font-family:var(--mono);font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.meter{height:4px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--good);transition:width .35s ease}
+.tabs{display:flex;gap:4px}
+.tabs button{flex:1;background:none;border:0;border-bottom:2px solid transparent;padding:10px 4px 9px;
+  font-size:.82rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+
+main{max-width:560px;margin:0 auto;padding-block:18px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---- tarjetas ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;gap:16px}
+.tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;align-items:center}
+.tag b{color:var(--accent);font-weight:500}
+.pregunta{font-family:var(--display);font-size:1.5rem;line-height:1.25;font-weight:600;letter-spacing:-.015em}
+.clave{font-size:1rem}
+.clave em{font-style:italic;font-family:var(--display);font-size:1.08rem}
+.aviso{background:var(--surface-2);border-left:3px solid var(--warn);padding:10px 12px;border-radius:0 8px 8px 0;font-size:.85rem;color:var(--muted)}
+.pts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;counter-reset:p}
+.pts li{margin:0}
+.pt{width:100%;text-align:left;display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:.93rem;line-height:1.45}
+.pt .n{font-family:var(--mono);font-size:.75rem;color:var(--accent);padding-top:.18rem;min-width:1.1em;font-variant-numeric:tabular-nums}
+.pt .t{min-width:0}
+.pt.oculto .t{filter:blur(5.5px);user-select:none}
+.pt.oculto{border-style:dashed}
+.refs{display:flex;flex-wrap:wrap;gap:6px}
+.ref{font-family:var(--mono);font-size:.72rem;color:var(--accent);background:var(--accent-soft);
+  border-radius:99px;padding:3px 9px;white-space:nowrap}
+.acciones{display:flex;gap:8px;flex-wrap:wrap}
+.btn{flex:1 1 140px;min-width:0;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:12px;
+  font-weight:500;font-size:.92rem;text-align:center}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+:root[data-theme="dark"] .btn.pri,.btn.pri{color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.pri{color:#0f151b}}
+:root[data-theme="dark"] .btn.pri{color:#0f151b}
+.btn.ok{border-color:var(--good);color:var(--good)}
+.btn.again{border-color:var(--warn);color:var(--warn)}
+.link{background:none;border:0;padding:0;color:var(--accent);font-size:.82rem;text-decoration:underline;text-underline-offset:3px;align-self:flex-start}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;color:var(--muted);font-size:.82rem}
+.nav button{background:none;border:0;color:var(--accent);padding:6px 2px}
+.listo{text-align:center;padding:28px 10px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.listo h2{font-family:var(--display);font-size:1.4rem}
+
+/* ---- estudio ---- */
+.buscar{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--fg);
+  border-radius:10px;padding:11px 13px;font:inherit;font-size:.95rem;margin-bottom:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.item>summary{list-style:none;cursor:pointer;padding:13px 14px;display:flex;gap:11px;align-items:flex-start}
+.item>summary::-webkit-details-marker{display:none}
+.item summary .n{font-family:var(--mono);font-size:.78rem;color:var(--muted);padding-top:.15rem;font-variant-numeric:tabular-nums}
+.item summary .q{font-family:var(--display);font-size:1.05rem;font-weight:600;line-height:1.3;min-width:0;flex:1}
+.item summary .dot{width:9px;height:9px;border-radius:99px;background:var(--line);margin-top:.42rem;flex:none}
+.item[data-dom="1"] summary .dot{background:var(--good)}
+.cuerpo{padding:0 14px 14px;display:flex;flex-direction:column;gap:13px;border-top:1px solid var(--line);padding-top:13px}
+.cuerpo .pt{background:var(--surface-2)}
+.nota{width:100%;min-height:74px;resize:vertical;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);
+  color:var(--fg);font:inherit;font-size:.92rem;padding:10px 12px}
+.nota-lb{font-family:var(--mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+.pie{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">
+      <h1>Repaso 12 pasos</h1>
+      <span class="cnt" id="cnt">0/17 dominadas</span>
+    </div>
+    <div class="meter"><i id="meter"></i></div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" id="t-tarjetas" aria-selected="true">Tarjetas</button>
+      <button role="tab" id="t-estudio" aria-selected="false">Estudio</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="v-tarjetas"></section>
+  <section id="v-estudio" hidden></section>
+  <div class="pie">
+    <span>Toca un punto borroso para revelarlo. Lo que escribas se guarda en este dispositivo.</span>
+    <button class="link" id="reset">Reiniciar progreso</button>
+  </div>
+</main>
+
+<script>
+var Q=[
+{n:1,q:"¿Qué es religiosidad?",
+ c:"Es la <em>apariencia de piedad sin el poder de Dios</em>: cumplir ritos, normas y tradiciones por fuera, sin relación con Él ni cambio del corazón.",
+ p:["Busca agradar a los hombres y ser vista, no agradar a Dios.","Se apoya en obras, ritos y tradiciones humanas.","Honra a Dios con los labios, pero el corazón está lejos.","Tiene la forma de la piedad pero niega su poder.","Produce orgullo, juicio y crítica hacia los demás.","La letra mata; solo el Espíritu da vida."],
+ r:["2 Ti 3:5","Mt 15:8-9","Mt 23:27-28","Is 29:13","2 Co 3:6"]},
+{n:2,q:"¿Qué es la idolatría?",
+ c:"Es <em>dar a alguien o a algo el lugar que solo le pertenece a Dios</em>: poner cualquier cosa por encima de Él, en el corazón o en la práctica.",
+ p:["Imágenes, figuras y objetos a los que se les rinde culto.","El dinero y la avaricia, que la Biblia llama idolatría.","Las personas: pareja, hijos, padres, líderes, artistas.","Uno mismo: el yo, el orgullo, la propia voluntad.","Placeres, trabajo, deporte, fama, diversión que ocupan el primer lugar.","Lo oculto y la superstición: amuletos, horóscopos, brujería."],
+ r:["Éx 20:3-5","Col 3:5","Ro 1:25","1 Jn 5:21"]},
+{n:3,q:"¿Qué incluye el verdadero arrepentimiento?",
+ c:"No es solo sentir pena: es un <em>cambio de mente que produce un cambio de vida</em>.",
+ p:["Reconocer el pecado sin excusas ni justificaciones.","Confesarlo a Dios y a quien corresponda.","Tristeza según Dios, no solo dolor por las consecuencias.","Renunciar al pecado y apartarse de él.","Pedir perdón y perdonar.","Restituir el daño causado.","Dar frutos dignos de arrepentimiento: conducta nueva."],
+ r:["Pr 28:13","2 Co 7:10","Hch 3:19","Mt 3:8","Lc 19:8"]},
+{n:4,q:"¿A quién debo someterme según la Biblia?",
+ c:"La sujeción es una cadena de autoridad que empieza en Dios: quien se somete a Dios se somete también a las autoridades que Él puso.",
+ p:["A Dios en primer lugar, y así resistir al diablo.","A Cristo y a su Palabra.","A mis pastores y líderes espirituales.","A mis padres, obedeciéndolos y honrándolos.","La esposa a su esposo; el esposo ama como Cristo a la iglesia.","A las autoridades civiles y las leyes.","A mis jefes o patronos en el trabajo.","Unos a otros, en el temor de Dios."],
+ r:["Stg 4:7","Heb 13:17","Ef 6:1-2","Ef 5:21-25","Ro 13:1","Ef 6:5"]},
+{n:5,q:"¿Cómo restituir?",
+ c:"Restituir es <em>reparar y devolver</em> lo que dañé o tomé, hasta donde sea posible, y hacerlo pronto.",
+ p:["Reconocer delante de Dios el daño que causé.","Hacer una lista de las personas y de los hechos concretos.","Ir personalmente al ofendido, sin intermediarios.","Confesar sin culpar a otros y pedir perdón.","Devolver o pagar lo robado o dañado, añadiendo lo que la Palabra indica.","Si ya no se puede devolver, reparar de otra manera y bendecir a esa persona.","Hacerlo pronto: antes de presentar mi ofrenda."],
+ r:["Lv 6:4-5","Nm 5:6-7","Lc 19:8","Mt 5:23-24","Éx 22:1"]},
+{n:6,q:"Escribe los cinco puntos: ¿qué sucede cuando no restituimos?",
+ c:"La falta de restitución deja el arrepentimiento incompleto y trae cinco consecuencias.",
+ p:["La conciencia queda contaminada y se pierde la paz.","La oración es estorbada: el pecado no confesado separa de Dios.","Se le da lugar al enemigo: queda una puerta abierta a la opresión.","Se detiene la bendición y la prosperidad.","Se estanca el crecimiento y la relación con Dios y con los demás queda rota."],
+ r:["Hch 24:16","Is 59:1-2","Ef 4:27","Pr 28:13","Mt 5:23-24"],
+ nota:"Si tu manual ordena o nombra estos cinco puntos de otra forma, ajústalos en «Con mis palabras»."},
+{n:7,q:"¿Qué es el perdón? Escribe los seis puntos",
+ c:"Perdonar es <em>cancelar una deuda</em>: soltar al que me ofendió y entregarle el caso a Dios.",
+ p:["Es una decisión de la voluntad, no un sentimiento.","Es cancelar la deuda: soltar al que me debe.","Es renunciar al derecho de cobrar y de vengarme.","Es un mandato de Dios, no una opción.","No es justificar, aprobar ni olvidar el mal que me hicieron.","Es un acto de fe que libera primero al que perdona."],
+ r:["Mt 18:21-35","Mt 6:14-15","Ro 12:19","Ef 4:32","Col 3:13"]},
+{n:8,q:"¿A quién tenemos que perdonar?",
+ c:"A toda persona con la que mi corazón tenga una cuenta pendiente, sin dejar a nadie por fuera.",
+ p:["A Dios: soltar los reclamos y reproches contra Él.","A mí mismo.","A mis padres y a mi familia.","A mi cónyuge, a mis hijos y a mis hermanos.","A mis amigos y a los hermanos de la iglesia.","A mis autoridades y líderes, jefes y compañeros.","A los que ya murieron y a los que me hirieron sin conocerlos.","A mis enemigos: orar por ellos y bendecirlos."],
+ r:["Mr 11:25","Mt 6:14","Mt 5:44"]},
+{n:9,q:"¿Cuáles son los pasos para el proceso de perdón?",
+ c:"El perdón se decide una vez y se sostiene cada día.",
+ p:["Pedirle al Espíritu Santo que traiga a memoria a las personas y las heridas.","Hacer la lista: nombre, ofensa y lo que sentí.","Decidir perdonar por obediencia, aunque el sentimiento no esté.","Declararlo en voz alta en oración, nombrando a la persona y la ofensa.","Renunciar al rencor, la amargura, el odio y el derecho de cobrar.","Pedirle a Dios que sane la herida y bendecir al que me ofendió.","Pedir perdón y restituir donde yo fui el ofensor.","Sostener la decisión: no volver a traer la cuenta cuando el recuerdo regrese."],
+ r:["Ef 4:31-32","Mt 6:12","Mt 5:44","Heb 12:15"]},
+{n:10,q:"¿Cuáles son las necesidades básicas de toda persona?",
+ c:"Dios creó al hombre con necesidades que <em>solo Él puede llenar</em>; cuando las buscamos fuera de Él nacen las ataduras.",
+ p:["Amor.","Aceptación.","Seguridad y protección.","Identidad y valor propio.","Propósito y sentido de vida.","Pertenencia: ser parte de una familia.","Reconocimiento y aprobación.","Disciplina y corrección.","Provisión y cuidado."],
+ r:["Sal 139:13-16","Jn 4:13-14","Fil 4:19","Ef 1:5-6"]},
+{n:11,q:"¿Por medio de qué el enemigo ha programado nuestra mente?",
+ c:"Por todo lo que entra por los ojos y los oídos sin filtro, repetido hasta volverse forma de pensar.",
+ p:["Televisión, novelas y cine.","Música y sus letras.","Internet, redes sociales y videojuegos.","Pornografía.","Publicidad, libros y revistas.","Educación y filosofías humanistas.","Religiosidad, tradiciones y costumbres familiares.","Palabras y maldiciones recibidas de padres, maestros y personas cercanas.","Amistades y ambientes.","Heridas y experiencias del pasado."],
+ r:["2 Co 4:4","Pr 23:7","Sal 101:3","Pr 18:21"]},
+{n:12,q:"¿Qué significa arrepentimiento?",
+ c:"En griego <em>metanoia</em>: cambiar de mente, cambiar la manera de pensar. En hebreo <em>shub</em>: volverse, dar media vuelta y regresar.",
+ p:["Cambiar de mente y de manera de pensar.","Dar media vuelta: dejar el camino del pecado.","Volverse a Dios y caminar en dirección contraria a la anterior.","Es el primer paso para que los pecados sean borrados."],
+ r:["Hch 3:19","Mt 4:17","Is 55:7"]},
+{n:13,q:"¿Cómo renovar la mente?",
+ c:"No conformándome a este siglo, sino <em>transformándome por medio de la renovación del entendimiento</em>.",
+ p:["Lavarme con la Palabra: leerla, meditarla y memorizarla.","Derribar argumentos y llevar todo pensamiento cautivo a Cristo.","Quitar las fuentes que me contaminan: no poner cosa injusta delante de mis ojos.","Confesar y declarar la Palabra sobre mi vida.","Pensar en lo verdadero, honesto, justo y puro.","Obedecer y practicar, no solo oír.","Cuidar mis amistades y mantener la comunión.","Depender del Espíritu Santo, que renueva el espíritu de la mente."],
+ r:["Ro 12:2","Ef 5:26","2 Co 10:4-5","Sal 101:3","Fil 4:8","Stg 1:22","Ef 4:23"]},
+{n:14,q:"¿Con qué propósito de Dios es el sexo? Escribe los seis puntos",
+ c:"Dios creó el sexo y lo puso dentro del matrimonio; fuera de ese marco se corrompe lo que Él hizo bueno.",
+ p:["Procreación: fructificad y multiplicaos.","Unidad: los dos vienen a ser una sola carne.","Deleite y placer mutuo dentro del matrimonio.","Conocimiento íntimo del cónyuge.","Protección contra la tentación y la inmoralidad.","Consuelo y expresión del amor y la entrega mutua."],
+ r:["Gn 1:28","Gn 2:24","Pr 5:18-19","Gn 4:1","1 Co 7:2-5","Heb 13:4"],
+ nota:"La hoja dice «propósito de odio»; parece una errata de «propósito de Dios». Si tu manual pregunta por los propósitos del enemigo, anótalo en «Con mis palabras»."},
+{n:15,q:"¿Cuál es la raíz de las ataduras sexuales?",
+ c:"La raíz está en el corazón: <em>necesidades de amor, aceptación e identidad que no fueron llenadas en Dios</em>, junto con heridas no sanadas.",
+ p:["Necesidades de amor y aceptación que se intentan llenar por el camino equivocado.","Heridas, rechazo y falta de afecto que quedaron sin sanar.","La concupiscencia del corazón: el deseo que atrae, concibe y da a luz pecado.","Una mente contaminada que alimenta la imaginación.","Vínculos y pactos del alma con relaciones anteriores.","Falta de arrepentimiento y de renuncia: la puerta queda abierta."],
+ r:["Stg 1:14-15","Mt 15:19","Pr 4:23","Ef 4:27"]},
+{n:16,q:"¿Cuáles son los pasos para ser sano sexualmente?",
+ c:"La sanidad combina arrepentimiento, renuncia, limpieza de la mente y cuentas claras con alguien que me acompañe.",
+ p:["Reconocer y confesar el pecado sin justificarlo.","Arrepentirse de verdad y renunciar en voz alta a cada práctica.","Romper los vínculos y pactos con relaciones pasadas; perdonar y pedir perdón.","Quitar toda fuente de contaminación: pornografía, contactos, lugares, música, redes.","Renovar la mente con la Palabra y llenar el vacío con la presencia de Dios.","Rendir cuentas a un líder o discipulador de confianza.","Huir de la tentación y poner límites concretos.","Andar en el Espíritu y perseverar, un día a la vez."],
+ r:["1 Jn 1:9","Pr 28:13","1 Co 6:18","2 Ti 2:22","Gá 5:16","1 Ts 4:3-5"]},
+{n:17,q:"¿Cuál es la visión y la misión de nuestra iglesia?",
+ c:"Esta respuesta es propia de tu congregación. Escríbela abajo tal como la enseñan y quedará guardada en tus tarjetas.",
+ p:[],
+ r:[],
+ propia:true}
+];
+
+var KEY="doce-pasos-v1";
+var st={box:{},nota:{}};
+try{var raw=localStorage.getItem(KEY); if(raw){var o=JSON.parse(raw); st.box=o.box||{}; st.nota=o.nota||{};}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function box(n){return st.box[n]||0}
+function dom(n){return box(n)>=2}
+
+var vT=document.getElementById("v-tarjetas"),vE=document.getElementById("v-estudio");
+var modo="tarjetas",idx=0,orden=[],verResp=false,abiertos={};
+
+function barajar(){
+  var a=Q.map(function(x){return x.n});
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}
+  a.sort(function(x,y){return box(x)-box(y)});
+  orden=a;
+}
+function porN(n){for(var i=0;i<Q.length;i++){if(Q[i].n===n)return Q[i]} return Q[0]}
+
+function progreso(){
+  var d=0;for(var i=0;i<Q.length;i++){if(dom(Q[i].n))d++}
+  document.getElementById("cnt").textContent=d+"/"+Q.length+" dominadas";
+  document.getElementById("meter").style.width=(d/Q.length*100)+"%";
+}
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function refsHTML(r){if(!r||!r.length)return"";var h='<div class="refs">';for(var i=0;i<r.length;i++){h+='<span class="ref">'+esc(r[i])+'</span>'}return h+'</div>'}
+function ptsHTML(p,tapados){
+  if(!p||!p.length)return"";
+  var h='<ol class="pts">';
+  for(var i=0;i<p.length;i++){
+    h+='<li><button class="pt'+(tapados?' oculto':'')+'" data-pt="'+i+'"><span class="n">'+(i+1)+'</span><span class="t">'+p[i]+'</span></button></li>';
+  }
+  return h+'</ol>';
+}
+
+function pintarTarjeta(){
+  if(idx>=orden.length){
+    vT.innerHTML='<div class="card listo"><h2>Vuelta terminada</h2><p style="color:var(--muted);margin:0">Marcaste tu avance en las 17 preguntas. Otra ronda empieza por las que menos dominas.</p><button class="btn pri" id="otra" style="flex:0 1 200px">Repetir ronda</button></div>';
+    document.getElementById("otra").onclick=function(){barajar();idx=0;verResp=false;pintarTarjeta()};
+    return;
+  }
+  var q=porN(orden[idx]);
+  var nota=st.nota[q.n]||"";
+  var cuerpo="";
+  if(verResp){
+    var clave=q.propia?(nota?'<em>'+esc(nota).replace(/\n/g,"<br>")+'</em>':q.c):q.c;
+    cuerpo='<div class="clave">'+clave+'</div>'
+      +(q.nota?'<p class="aviso">'+q.nota+'</p>':'')
+      +ptsHTML(q.p,true)
+      +(q.p.length?'<button class="link" id="todos">Revelar todos los puntos</button>':'')
+      +refsHTML(q.r)
+      +'<div class="acciones"><button class="btn again" id="again">Repasar otra vez</button><button class="btn ok" id="ok">Me la sé</button></div>';
+  }else{
+    cuerpo='<div class="acciones"><button class="btn pri" id="ver">Ver respuesta</button></div>';
+  }
+  vT.innerHTML='<article class="card">'
+    +'<div class="tag"><b>Pregunta '+q.n+'</b><span>'+(idx+1)+' de '+orden.length+'</span>'
+    +(q.p.length?'<span>'+q.p.length+' puntos</span>':'')
+    +(dom(q.n)?'<span style="color:var(--good)">dominada</span>':'')+'</div>'
+    +'<h2 class="pregunta">'+q.q+'</h2>'+cuerpo+'</article>'
+    +'<div class="nav"><button id="prev">&larr; Anterior</button><span>'+(dom(q.n)?"Ya la marcaste como dominada":"Responde en voz alta antes de voltear")+'</span><button id="next">Saltar &rarr;</button></div>';
+
+  var b;
+  if((b=document.getElementById("ver")))b.onclick=function(){verResp=true;pintarTarjeta()};
+  if((b=document.getElementById("todos")))b.onclick=function(){
+    var l=vT.querySelectorAll(".pt.oculto");for(var i=0;i<l.length;i++)l[i].classList.remove("oculto");
+  };
+  if((b=document.getElementById("again")))b.onclick=function(){st.box[q.n]=0;save();progreso();idx++;verResp=false;pintarTarjeta()};
+  if((b=document.getElementById("ok")))b.onclick=function(){st.box[q.n]=box(q.n)+1;save();progreso();idx++;verResp=false;pintarTarjeta()};
+  document.getElementById("prev").onclick=function(){if(idx>0)idx--;verResp=false;pintarTarjeta()};
+  document.getElementById("next").onclick=function(){idx++;verResp=false;pintarTarjeta()};
+  var pts=vT.querySelectorAll(".pt");
+  for(var i=0;i<pts.length;i++){pts[i].onclick=function(){this.classList.toggle("oculto")}}
+}
+
+function pintarLista(filtro){
+  filtro=(filtro||"").toLowerCase().trim();
+  var h='<input class="buscar" id="q" type="search" placeholder="Buscar por palabra: perdón, restituir, mente…" value="'+esc(filtro)+'">';
+  var vistos=0;
+  for(var i=0;i<Q.length;i++){
+    var q=Q[i];
+    var texto=(q.q+" "+q.c+" "+q.p.join(" ")).toLowerCase();
+    if(filtro&&texto.indexOf(filtro)<0)continue;
+    vistos++;
+    var nota=st.nota[q.n]||"";
+    h+='<details class="item" data-dom="'+(dom(q.n)?1:0)+'" data-n="'+q.n+'"'+(abiertos[q.n]||filtro?" open":"")+'>'
+      +'<summary><span class="n">'+(q.n<10?"0":"")+q.n+'</span><span class="q">'+q.q+'</span><span class="dot"></span></summary>'
+      +'<div class="cuerpo">'
+      +'<div class="clave">'+q.c+'</div>'
+      +(q.nota?'<p class="aviso">'+q.nota+'</p>':'')
+      +ptsHTML(q.p,false)
+      +refsHTML(q.r)
+      +'<div><label class="nota-lb" for="nota'+q.n+'">'+(q.propia?"La visión y la misión de mi iglesia":"Con mis palabras")+'</label>'
+      +'<textarea class="nota" id="nota'+q.n+'" data-n="'+q.n+'" placeholder="'+(q.propia?"Escríbelas tal como las enseñan en tu iglesia…":"Escribe la respuesta como la vas a decir…")+'">'+esc(nota)+'</textarea></div>'
+      +'<button class="link" data-dom-btn="'+q.n+'">'+(dom(q.n)?"Quitar de dominadas":"Marcar como dominada")+'</button>'
+      +'</div></details>';
+  }
+  if(!vistos)h+='<p style="color:var(--muted)">Ninguna pregunta coincide con esa palabra.</p>';
+  vE.innerHTML=h;
+  var inp=document.getElementById("q");
+  inp.oninput=function(){var v=this.value;pintarLista(v);var n=document.getElementById("q");n.focus();n.setSelectionRange(v.length,v.length)};
+  var ds=vE.querySelectorAll("details");
+  for(var k=0;k<ds.length;k++){ds[k].ontoggle=function(){abiertos[this.getAttribute("data-n")]=this.open}}
+  var ts=vE.querySelectorAll("textarea");
+  for(var k2=0;k2<ts.length;k2++){ts[k2].oninput=function(){st.nota[this.getAttribute("data-n")]=this.value;save()}}
+  var bs=vE.querySelectorAll("[data-dom-btn]");
+  for(var k3=0;k3<bs.length;k3++){bs[k3].onclick=function(){
+    var n=this.getAttribute("data-dom-btn");st.box[n]=dom(n)?0:2;save();progreso();pintarLista(document.getElementById("q").value);
+  }}
+}
+
+function setModo(m){
+  modo=m;
+  document.getElementById("t-tarjetas").setAttribute("aria-selected",m==="tarjetas");
+  document.getElementById("t-estudio").setAttribute("aria-selected",m==="estudio");
+  vT.hidden=m!=="tarjetas";vE.hidden=m!=="estudio";
+  if(m==="tarjetas")pintarTarjeta();else pintarLista(document.getElementById("q")?document.getElementById("q").value:"");
+  window.scrollTo(0,0);
+}
+document.getElementById("t-tarjetas").onclick=function(){setModo("tarjetas")};
+document.getElementById("t-estudio").onclick=function(){setModo("estudio")};
+document.getElementById("reset").onclick=function(){st.box={};save();progreso();barajar();idx=0;verResp=false;setModo(modo)};
+
+barajar();progreso();pintarTarjeta();pintarLista("");
+</script>
+</body>
+</html>
